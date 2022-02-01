@@ -3,6 +3,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 
 import { LOGO, MAGNIFYICON, SERVER } from 'utils/url';
+import { ITEMWIDTH, SLIDEWIDTH } from 'utils/constants';
 
 interface ProductsProps {
   id: number;
@@ -43,7 +44,7 @@ const Content = styled.div`
 `;
 
 const Img = styled.img`
-  max-width: 500px;
+  max-width: ${SLIDEWIDTH}px;
   height: auto;
 `;
 
@@ -62,21 +63,19 @@ const Btn = styled.button<{ pointX: number; pointY: number }>`
 `;
 
 const Swiper = styled.div`
-  width: 500px;
+  width: ${SLIDEWIDTH}px;
   height: 160px;
   overflow-y: hidden;
-  touch-action: pan-y;
+  overflow-x: hidden;
 `;
 
-const Slide = styled.div`
+const Slide = styled.div<{ transX: number }>`
+  transform: translateX(-${(props) => props.transX}px);
+  transition: transform 300ms;
   display: flex;
   width: auto;
   height: 160px;
   align-items: center;
-  overflow-y: hidden;
-  overflow-x: auto;
-  touch-action: pan-y;
-  scroll-snap-type: x mandatory;
 `;
 
 const SlideItem = styled.img`
@@ -85,7 +84,6 @@ const SlideItem = styled.img`
   border-radius: 16px;
   border: 0.5px solid #aaafb9;
   margin: 6px;
-  scroll-snap-align: start;
   -webkit-user-drag: none;
 `;
 
@@ -95,6 +93,7 @@ function App(): ReactElement {
 
   const [touchStart, setTouchStart] = useState<number>(0);
   const [touchEnd, setTouchEnd] = useState<number>(0);
+  const [slideX, setSlideX] = useState<number>(0);
 
   const getProducts = async () => {
     try {
@@ -129,8 +128,14 @@ function App(): ReactElement {
   };
 
   const handleTouchEnd = () => {
-    if (touchStart - touchEnd > 70) console.log('오른쪽!');
-    if (touchStart - touchEnd < -70) console.log('왼쪽!');
+    const touch = slideX + touchStart - touchEnd;
+
+    if (productsData) {
+      if (touch > ITEMWIDTH * productsData.productList.length - SLIDEWIDTH)
+        setSlideX(ITEMWIDTH * productsData.productList.length - SLIDEWIDTH);
+      else if (touch < 0) setSlideX(0);
+      else setSlideX(touch);
+    }
   };
 
   return (
@@ -157,7 +162,7 @@ function App(): ReactElement {
             onMouseMove={handleTouchMove}
             onMouseUp={handleTouchEnd}
           >
-            <Slide>
+            <Slide transX={slideX}>
               {productsData.productList.map((item, idx) => (
                 <SlideItem key={(item.productId, idx)} src={item.imageUrl} />
               ))}

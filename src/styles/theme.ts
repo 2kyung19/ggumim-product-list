@@ -1,8 +1,6 @@
 import { DefaultTheme } from 'styled-components';
 
 const theme: DefaultTheme = {
-  imageWidth: '800px',
-
   color: {
     main: '#E7555A',
     white: '#FFFFFF',

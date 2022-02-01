@@ -1,0 +1,4 @@
+const SLIDEWIDTH = 500;
+const ITEMWIDTH = 118;
+
+export { SLIDEWIDTH, ITEMWIDTH };
