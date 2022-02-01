@@ -4,7 +4,7 @@ const theme: DefaultTheme = {
   imageWidth: '800px',
 
   color: {
-    main: '#FC3E4C',
+    main: '#E7555A',
     white: '#FFFFFF',
     border: '#9A9FAA',
   },
