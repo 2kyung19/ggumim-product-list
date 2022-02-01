@@ -2,7 +2,7 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 
-import { LOGO, MAGNIFYICON, SERVER } from 'utils/url';
+import { DISCOUNT, LOGO, MAGNIFYICON, SERVER } from 'utils/url';
 import { ITEMWIDTH, SLIDEWIDTH } from 'utils/constants';
 
 interface ProductsProps {
@@ -69,22 +69,43 @@ const Swiper = styled.div`
   overflow-x: hidden;
 `;
 
-const Slide = styled.div<{ transX: number }>`
+const Slide = styled.div<{ width: number; transX: number }>`
   transform: translateX(-${(props) => props.transX}px);
   transition: transform 300ms;
   display: flex;
-  width: auto;
+  width: ${(props) => props.width}px;
   height: 160px;
   align-items: center;
 `;
 
-const SlideItem = styled.img`
+const SlideItem = styled.div<{ src: string }>`
+  position: relative;
   width: 106px;
   height: 106px;
   border-radius: 16px;
   border: 0.5px solid #aaafb9;
+  background-image: url(${(props) => props.src});
+  background-repeat: no-repeat;
+  background-size: cover;
   margin: 6px;
   -webkit-user-drag: none;
+`;
+
+const DiscountBadge = styled.div`
+  position: absolute;
+  top: 0px;
+  right: 5px;
+  width: 24px;
+  height: 28px;
+  background-image: url(${DISCOUNT});
+  background-repeat: no-repeat;
+  background-size: cover;
+  text-align: center;
+  padding-left: 1px;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  line-height: 25px;
 `;
 
 function App(): ReactElement {
@@ -162,9 +183,16 @@ function App(): ReactElement {
             onMouseMove={handleTouchMove}
             onMouseUp={handleTouchEnd}
           >
-            <Slide transX={slideX}>
+            <Slide
+              width={ITEMWIDTH * productsData.productList.length}
+              transX={slideX}
+            >
               {productsData.productList.map((item, idx) => (
-                <SlideItem key={(item.productId, idx)} src={item.imageUrl} />
+                <SlideItem key={(item.productId, idx)} src={item.imageUrl}>
+                  {item.discountRate !== 0 && (
+                    <DiscountBadge>{item.discountRate}%</DiscountBadge>
+                  )}
+                </SlideItem>
               ))}
             </Slide>
           </Swiper>
