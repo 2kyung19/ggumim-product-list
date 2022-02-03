@@ -1,46 +1,77 @@
-# Getting Started with Create React App
+# [집꾸미기] 집 소개 페이지
+원티드 프리온보딩 프론트엔드 코스    
+집꾸미기 기업과제  
+<br />
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## `배포`
+http://ggumim.s3-website.ap-northeast-2.amazonaws.com/  
+<br/>
 
-## Available Scripts
+## `실행`
 
-In the project directory, you can run:
+` npm install && npm run start`  
+<br/>
 
-### `npm start`
+## `환경`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- macOS Monterey 12.1
+- chrome 97.0.4692.71 (arm64)  
+  <br />
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## `디렉토리`
 
-### `npm test`
+```
+ggumim-product-list/src
+│
+├── components
+│   ├── swiper              # 하단 슬라이드
+│   │   ├── index.tsx
+│   │   └── styles.tsx
+│   └── tag                 # 이미지 내부 태그 버튼
+│       ├── index.tsx
+│       └── styles.tsx
+├── index.css
+├── index.tsx
+├── pages
+│   └── main                # 메인페이지
+│       ├── index.tsx
+│       └── styles.tsx
+├── styles                  # global style
+│   ├── global-styles.ts
+│   ├── styled.d.ts
+│   └── theme.ts
+└── utils
+    ├── constants.tsx       # 이미지 관련 상수
+    └── url.tsx             # 이미지 url
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+<br/>
 
-### `npm run build`
+## `기능`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 1. 가구 정보 태그
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- api에서 받아온 pointX, pointY로 가구 정보 위치 출력
+- 기존 돋보기에서 클릭 시 닫기 버튼으로 변경
+- 여러 버튼 중 하나만 active
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 2. 가구 정보 tool tip
 
-### `npm run eject`
+- 정보 태그 (돋보기) 클릭 시 tool tip 노출
+- tool tip 위치 조정 (메인이미지 중점에서 4분할)
+  - 제1사분면 : 정보 태그 아래, 왼쪽 치우침
+  - 제2사분면 : 정보 태그 아래, 오른쪽 치우침
+  - 제3사분면 : 정보 태그 위, 오른쪽 치우침
+  - 제4사분면 : 정보 태그 위, 왼쪽 치우침
+- outside에 따라 tooltip 내용 변경
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+### 3. 상품목록 슬라이드
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- 정보 태그 (돋보기) 클릭 시 선택 표시
+- 할인율 표시
+- 스와이프 구현
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### `screen`
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+https://user-images.githubusercontent.com/32586712/152331154-ea3087d1-f734-4434-868b-cd2436d7da4f.mov
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
