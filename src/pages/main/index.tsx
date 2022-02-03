@@ -1,6 +1,6 @@
 import React, { ReactElement, useEffect, useState } from 'react';
 import axios from 'axios';
-import * as S from 'pages/main/styled';
+import * as S from 'pages/main/styles';
 import { SERVER } from 'utils/url';
 import { IMGRATE, ITEMWIDTH, IMGWIDTH } from 'utils/constants';
 import Tag from 'components/tag';
