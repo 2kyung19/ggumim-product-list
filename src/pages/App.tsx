@@ -2,8 +2,16 @@ import React, { ReactElement, useEffect, useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
 
-import { CANCELICON, DISCOUNT, LOGO, MAGNIFYICON, SERVER } from 'utils/url';
-import { ITEMWIDTH, SLIDEWIDTH } from 'utils/constants';
+import {
+  DISCOUNT,
+  LOGO,
+  MAGNIFYICON,
+  CANCELICON,
+  TOOLTIP,
+  SERVER,
+  TOOLLINKICON,
+} from 'utils/url';
+import { IMGRATE, ITEMWIDTH, IMGWIDTH } from 'utils/constants';
 
 interface ProductsProps {
   id: number;
@@ -43,11 +51,11 @@ const Content = styled.div`
 `;
 
 const Img = styled.img`
-  max-width: ${SLIDEWIDTH}px;
+  max-width: ${IMGWIDTH}px;
   height: auto;
 `;
 
-const Btn = styled.button<{ active: boolean; pointX: number; pointY: number }>`
+const Tag = styled.button<{ active: boolean; pointX: number; pointY: number }>`
   position: absolute;
   width: ${(props) => props.theme.icon.size};
   height: ${(props) => props.theme.icon.size};
@@ -56,13 +64,120 @@ const Btn = styled.button<{ active: boolean; pointX: number; pointY: number }>`
   background-repeat: no-repeat;
   background-size: cover;
   border: 0px;
-  left: ${(props) => props.pointY}px;
-  top: ${(props) => props.pointX}px;
+  left: ${(props) => props.pointY * IMGRATE}px;
+  top: ${(props) => props.pointX * IMGRATE}px;
   z-index: 1;
 `;
 
+const Tooltip = styled.div<{
+  active: boolean;
+  height: number;
+  pointX: number;
+  pointY: number;
+}>`
+  position: absolute;
+  left: ${(props) => {
+    if (props.pointY * IMGRATE < IMGWIDTH / 2)
+      return props.pointY * IMGRATE - 24;
+    return props.pointY * IMGRATE - 24 - 140;
+  }}px;
+  top: ${(props) => {
+    if (props.pointX * IMGRATE < props.height / 2)
+      return props.pointX * IMGRATE + 28;
+    return props.pointX * IMGRATE - 28 - 86;
+  }}px;
+  width: 220px;
+  height: 86px;
+  margin-top: 16px;
+  background-color: #fff;
+  border-radius: 7px;
+  display: ${(props) => {
+    if (props.active) return 'flex';
+    return 'none';
+  }};
+  align-items: center;
+  padding: 8px 0 8px 8px;
+  box-shadow: 3px 3px 8px 0 rgb(0 0 0 / 20%);
+  color: #4a4a4a;
+  font-size: 14px;
+  z-index: 1000;
+
+  ::before {
+    content: '';
+    position: absolute;
+    ${(props) => {
+      if (props.pointX * IMGRATE < props.height / 2) return 'top:-8px';
+      return 'bottom:-8px; transform: rotate(180deg)';
+    }};
+    ${(props) => {
+      if (props.pointY * IMGRATE < IMGWIDTH / 2) return 'left:34px';
+      return 'right:34px';
+    }};
+    width: 12px;
+    height: 8px;
+    background-image: url(${TOOLTIP});
+    background-size: cover;
+    background-repeat: no-repeat;
+    z-index: 1100;
+  }
+`;
+
+const ToolImg = styled.img`
+  width: 70px;
+  height: 70px;
+  margin-right: 8px;
+`;
+
+const ToolDesc = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding-bottom: 2px;
+  overflow: hidden;
+  text-align: left;
+`;
+
+const ToolName = styled.div`
+  width: 100%;
+  overflow: hidden;
+  color: #333c45;
+  text-overflow: ellipsis;
+  line-height: 1.3em;
+  font-size: 14px;
+`;
+
+const ToolLink = styled.img`
+  width: 20px;
+  height: 20px;
+  margin-right: 3px;
+  position: relative;
+  bottom: -22px;
+`;
+
+const ToolPrice = styled.span`
+  font-size: 16px;
+  font-weight: bold;
+`;
+const ToolDiscount = styled.span`
+  font-size: 16px;
+  font-weight: bold;
+  margin-right: 4px;
+  color: #ff585d;
+`;
+
+const ToolOutside = styled.span`
+  position: relative;
+  bottom: 1px;
+  font-size: 11px;
+  font-weight: bold;
+  margin-right: 4px;
+  color: #898f94;
+`;
+
 const Swiper = styled.div`
-  width: ${SLIDEWIDTH}px;
+  width: ${IMGWIDTH}px;
   height: 160px;
   overflow-y: hidden;
   overflow-x: hidden;
@@ -128,6 +243,7 @@ function App(): ReactElement {
   const [touchStart, setTouchStart] = useState<number>(0);
   const [touchEnd, setTouchEnd] = useState<number>(0);
   const [slideX, setSlideX] = useState<number>(0);
+  const [imgHeight, setImgHeight] = useState<number>(0);
 
   const getProducts = async () => {
     try {
@@ -142,10 +258,17 @@ function App(): ReactElement {
     }
   };
 
+  const getImgHeight = () => {
+    const img = new Image();
+    if (productsData) img.src = productsData?.imageUrl;
+
+    setImgHeight(img.height * (IMGRATE / 2));
+  };
+
   const moveSlide = (x: number) => {
     if (productsData) {
-      if (x > ITEMWIDTH * productsData.productList.length - SLIDEWIDTH)
-        setSlideX(ITEMWIDTH * productsData.productList.length - SLIDEWIDTH);
+      if (x > ITEMWIDTH * productsData.productList.length - IMGWIDTH)
+        setSlideX(ITEMWIDTH * productsData.productList.length - IMGWIDTH);
       else if (x < 0) setSlideX(0);
       else setSlideX(x);
     }
@@ -186,6 +309,7 @@ function App(): ReactElement {
       arr[idx] = true;
     }
 
+    getImgHeight();
     setUserSelect(arr);
     moveSlide(ITEMWIDTH * idx);
   };
@@ -203,14 +327,37 @@ function App(): ReactElement {
           <Content>
             <Img src={productsData.imageUrl} alt="photo1" />
             {productsData.productList.map((item, idx) => (
-              <Btn
-                key={(item.productId, idx)}
-                active={userSelect[idx]}
-                pointX={item.pointX}
-                pointY={item.pointY}
-                onClick={selectProduct}
-                value={idx}
-              />
+              <div key={(item.productId, idx)}>
+                <Tag
+                  active={userSelect[idx]}
+                  pointX={item.pointX}
+                  pointY={item.pointY}
+                  onClick={selectProduct}
+                  value={idx}
+                />
+                <Tooltip
+                  active={userSelect[idx]}
+                  height={imgHeight}
+                  pointX={item.pointX}
+                  pointY={item.pointY}
+                >
+                  <ToolImg src={item.imageUrl} />
+                  <ToolDesc>
+                    <ToolName>{item.productName}</ToolName>
+                    <div>
+                      {item.outside ? (
+                        <ToolOutside>예상가</ToolOutside>
+                      ) : (
+                        <ToolDiscount>{item.discountRate}%</ToolDiscount>
+                      )}
+                      <ToolPrice>
+                        {new Intl.NumberFormat().format(item.priceDiscount)}
+                      </ToolPrice>
+                    </div>
+                  </ToolDesc>
+                  <ToolLink src={TOOLLINKICON} />
+                </Tooltip>
+              </div>
             ))}
           </Content>
           <Swiper

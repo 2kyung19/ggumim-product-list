@@ -1,4 +1,4 @@
-const SLIDEWIDTH = 500;
+const IMGWIDTH = 800;
 const ITEMWIDTH = 122;
-
-export { SLIDEWIDTH, ITEMWIDTH };
+const IMGRATE = 8 / 5;
+export { IMGWIDTH, ITEMWIDTH, IMGRATE };

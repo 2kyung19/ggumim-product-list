@@ -6,7 +6,7 @@ const GlobalStyle = createGlobalStyle`
 
   html,
   body {
-    font-family: sans-serif;
+    font-family: 'Spoqa Han Sans';
   }
 
   * {
